@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xingci - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+        }
+
+        /* ========== 老电视开机动画 ========== */
+        #tv-boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .scanline {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to bottom, transparent, rgba(56, 189, 248, 0.8), transparent);
+            animation: scanMove 0.1s linear infinite;
+            opacity: 0;
+        }
+
+        .tv-line {
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background: #38bdf8;
+            box-shadow: 0 0 20px #38bdf8, 0 0 40px #38bdf8, 0 0 60px rgba(56, 189, 248, 0.5);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: lineExpand 0.8s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        .screen-expand {
+            position: absolute;
+            width: 0;
+            height: 0;
+            background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.3) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            animation: screenOpen 1.5s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        .tv-flicker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            animation: flicker 0.15s ease-out forwards;
+            animation-delay: 1.2s;
+        }
+
+        .screen-full {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes scanMove {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        @keyframes lineExpand {
+            0% { width: 0; opacity: 1; }
+            100% { width: 200%; opacity: 0; }
+        }
+
+        @keyframes screenOpen {
+            0% { width: 0; height: 0; opacity: 1; }
+            60% { width: 120vw; height: 120vh; opacity: 0.8; }
+            100% { width: 150vw; height: 150vh; opacity: 0; }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.8; }
+            25% { opacity: 0; }
+            50% { opacity: 0.5; }
+            75% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        #tv-boot-screen.hidden {
+            display: none;
+        }
+
+        #main-content {
+            opacity: 0;
+            animation: contentFadeIn 0.8s ease-out forwards;
+            animation-delay: 1.8s;
+        }
+
+        @keyframes contentFadeIn {
+            to { opacity: 1; }
+        }
+
+        /* 导航栏 */
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: rgba(15, 23, 42, 0.9);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #1e293b;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #38bdf8;
+            letter-spacing: 2px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin-left: 40px;
+        }
+
+        nav a:hover {
+            color: #38bdf8;
+        }
+
+        /* Hero 区域 */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            background-color: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+        }
+
+        /* 特性区域（卡片） */
+        .features {
+            padding: 80px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            background-color: #1e293b;
+        }
+
+        .feature-card {
+            background-color: #0f172a;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            pointer-events: none;
+            user-select: none;
+            cursor: default;
+            opacity: 0.85;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: #f1f5f9;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid #1e293b;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .author-link {
+            color: #38bdf8;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .author-link:hover {
+            color: #818cf8;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            nav ul { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 老电视开机动画 -->
+    <div id="tv-boot-screen">
+        <div class="scanline"></div>
+        <div class="tv-line"></div>
+        <div class="screen-expand"></div>
+        <div class="tv-flicker"></div>
+        <div class="screen-full"></div>
+    </div>
+
+    <!-- 主页面 -->
+    <div id="main-content">
+        <header>
+            <div class="logo">xingci</div>
+            <nav>
+                <ul>
+                    <li><a href="#">首页</a></li>
+                    <li><a href="#">产品</a></li>
+                    <li><a href="#">关于</a></li>
+                    <li><a href="#">联系</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>欢迎来到 xingci</h1>
+            <p>不是 你真在看我的网站啊。</p>
+            <button class="cta-button" onclick="showVideoYear()">📅 查看视频介绍（年月日）</button>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <h3>🚫 这里点不了</h3>
+                <p>这个卡片是禁用的，点击没有任何反应。</p>
+            </div>
+            <div class="feature-card">
+                <h3>👤 作者介绍</h3>
+                <p>作者介绍在最下面，往下滑就能看到啦。</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎮 关于作者</h3>
+                <p>这里就是我的作者介绍——我是一个基本上只玩一些小众游戏的作者。</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>作者：<a href="https://space.bilibili.com/3546905797724612" target="_blank" class="author-link">哔哩哔哩@mc_xingci</a></p>
+            <p>&copy; 2026 xingci. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 老电视开机动画
+        setTimeout(() => {
+            document.getElementById('tv-boot-screen').classList.add('hidden');
+        }, 2200);
+
+        // ========== 视频列表（在这里修改你的视频信息） ==========
+        const myVideos = [
+            { title: "视频1", date: "2026年2月7" },
+            { title: "视频2", date: "2026年2月10" },
+            { title: "视频3", date: "2026年2月13" },
+            { title: "视频4", date: "2026年3月2" },
+            { title: "视频5", date: "2026年4月10" },
+            { title: "视频6", date: "2026年8月7" },
+            { title: "视频7", date: "2026年8月16" },
+            { title: "视频8", date: "2026年8月17" },
+            { title: "视频9", date: "2026年8月22" },
+            { title: "视频10", date: "2026年8月23" },
+        ];
+
+        // 点击按钮弹出所有视频的年月日介绍
+        function showVideoYear() {
+            let msg = "📅 我发布的视频介绍：\n\n";
+            myVideos.forEach((v, i) => {
+                msg += `${i + 1}. 《${v.title}》\n   发布日期：${v.date}\n\n`;
+            });
+            alert(msg);
+        }
+    </script>
+
+</body>
+</html>
+
